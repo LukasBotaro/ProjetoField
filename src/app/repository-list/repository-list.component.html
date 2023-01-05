@@ -1,0 +1,6 @@
+<ul>
+    <li *ngFor="let repository of searchResultList">        
+        <h3><a href="{{repository.html_url}}" target="_blank">{{repository.name}}</a></h3>        
+        <p>{{repository.watchers}}</p>
+    </li>
+</ul>
