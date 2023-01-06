@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { SearchResults } from '../_models/search-results';
 import { SearchResultItem } from '../_models/search-result-item';
+import { RepositoryService } from '../_services/repository/repository.service';
 
 @Component({
   selector: 'app-repository-list',
@@ -18,40 +17,40 @@ export class RepositoryListComponent implements OnChanges {
 
   @Input() searchText = '';
 
-  constructor(private http: HttpClient) { };
-  
+  constructor(private repositoryService: RepositoryService) { };
+
   ngOnChanges() {
     if (this.searchText.length !== 0) {
-      this.getRepositories();
+      this.updateRepositoryList();
     }
     else {
       this.searchResultList = [];
     }
   }
 
-  previousPage(){
-    if (this.currentPage>1){
+  previousPage() {
+    if (this.currentPage > 1) {
       this.currentPage--;
-      this.getRepositories();
+      this.updateRepositoryList();
     }
   }
 
-  nextPage(){
+  nextPage() {
     this.currentPage++;
-    this.getRepositories();
+    this.updateRepositoryList();
   }
 
-  getRepositories(){
-    this.http.get<SearchResults>(`https://api.github.com/search/repositories?q=${this.searchText}&per_page=10&page=${this.currentPage}`)
-    .subscribe((response) => {
-      this.searchResultList = response.items;
-      let maxNumberOfPages = response.total_count/10;
-      if (maxNumberOfPages > 100) {
-        maxNumberOfPages = 100;
-      }
+  updateRepositoryList() {
+    this.repositoryService.getRepositories(this.searchText, this.currentPage)
+      .subscribe((response) => {
+        this.searchResultList = response.items;
+        let maxNumberOfPages = response.total_count / 10;
+        if (maxNumberOfPages > 100) {
+          maxNumberOfPages = 100;
+        }
 
-      this.hasPreviousPage = this.currentPage > 1;
-      this.hasNextPage = this.currentPage < maxNumberOfPages;
-    });
+        this.hasPreviousPage = this.currentPage > 1;
+        this.hasNextPage = this.currentPage < maxNumberOfPages;
+      });
   }
 }
