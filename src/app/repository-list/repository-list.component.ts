@@ -11,21 +11,47 @@ import { SearchResultItem } from '../_models/search-result-item';
 
 export class RepositoryListComponent implements OnChanges {
   searchResultList: SearchResultItem[] = [];
+  currentPage: number = 1;
+  totalPages: number = 1;
+  hasPreviousPage: boolean = false;
+  hasNextPage: boolean = false;
 
   @Input() searchText = '';
 
   constructor(private http: HttpClient) { };
-
+  
   ngOnChanges() {
     if (this.searchText.length !== 0) {
-      this.http.get<SearchResults>(`https://api.github.com/search/repositories?q=${this.searchText}&per_page=10`)
-        .subscribe((response) => {
-          this.searchResultList = response.items
-          console.log(response.total_count)
-        });
+      this.getRepositories();
     }
     else {
       this.searchResultList = [];
     }
+  }
+
+  previousPage(){
+    if (this.currentPage>1){
+      this.currentPage--;
+      this.getRepositories();
+    }
+  }
+
+  nextPage(){
+    this.currentPage++;
+    this.getRepositories();
+  }
+
+  getRepositories(){
+    this.http.get<SearchResults>(`https://api.github.com/search/repositories?q=${this.searchText}&per_page=10&page=${this.currentPage}`)
+    .subscribe((response) => {
+      this.searchResultList = response.items;
+      let maxNumberOfPages = response.total_count/10;
+      if (maxNumberOfPages > 100) {
+        maxNumberOfPages = 100;
+      }
+
+      this.hasPreviousPage = this.currentPage > 1;
+      this.hasNextPage = this.currentPage < maxNumberOfPages;
+    });
   }
 }

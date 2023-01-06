@@ -1,5 +1,7 @@
 export interface SearchResultItem {
-    name: string;
+    full_name: string;
     html_url: string;
-    watchers: number;
+    stargazers_count: number;
+    description: string;
+    topics: string[];
 }

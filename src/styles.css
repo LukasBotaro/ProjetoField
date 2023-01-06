@@ -6,3 +6,27 @@ body {
 p {
     color: antiquewhite;
 }
+
+button {
+    margin: 0px 0px 0px 20px;
+    background-color: #238636;
+    border: 1px;
+    border-radius: 8px;
+    border-style: groove;
+    border-color: #3A994D;
+    color: white;
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #2ea043;
+}
+
+button:disabled {
+    background-color: gray;
+    border-color: gray;
+}
